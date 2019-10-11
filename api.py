@@ -82,7 +82,8 @@ def req_token(i):
 @req_token
 def get_employees(current_employee):
     """
-    Get all employees
+    Get all employees,
+    if employee isn't an admin, returns an error (401)
     """
     if not current_employee.admin:
         return jsonify({'message': 'No no, you cannot do that'})
@@ -111,7 +112,7 @@ def get_employees(current_employee):
 def get_employee(current_employee, public_id):
     """
     Get an employee based on public_id,
-    if public_id doesn't match with an employee, returns an error message
+    if employee isn't an admin, returns an error (401)
     """
     if not current_employee.admin:
         return jsonify({'message': 'No no, you cannot do that'})
@@ -137,7 +138,7 @@ def get_employee(current_employee, public_id):
 def promote_employee(current_employee, public_id):
     """
     Promote new employee,
-    if public_id doesn't match with an employee, returns an error message
+    if employee isn't an admin, returns an error (401)
     """
     if not current_employee.admin:
         return jsonify({'message': 'No no, you cannot do that'})
@@ -157,7 +158,8 @@ def promote_employee(current_employee, public_id):
 @req_token
 def create_employee(current_employee):
     """
-    Create a new employee
+    Create a new employee,
+    if employee isn't an admin, returns an error (401)
     """
     if not current_employee.admin:
         return jsonify({'message': 'No no, you cannot do that'})
@@ -179,7 +181,7 @@ def create_employee(current_employee):
 def remove_employee(current_employee, public_id):
     """
     Remove employee,
-    if public_id doesn't match with an employee, returns an error message
+    if employee isn't an admin, returns an error (401)
     """
     if not current_employee.admin:
         return jsonify({'message': 'No no, you cannot do that'})
@@ -193,6 +195,103 @@ def remove_employee(current_employee, public_id):
     db.session.commit()
 
     return jsonify({'message': 'Employee has been removed'})
+
+
+@app.route('/job_tasks', methods=['GET'])
+@req_token
+def get_tasks(current_employee):
+    """
+    Get all tasks
+    """
+    tasks = Job_tasks.query.filter_by(employee_id=current_employee.id).all()
+
+    output = []
+
+    for task in tasks:
+
+        __tasks__ = {}
+
+        __tasks__['id'] = task.id
+        __tasks__['task'] = task.task
+        __tasks__['done'] = task.done
+
+        output.append(__tasks__)
+
+    return jsonify({'task list': output})
+
+
+@app.route('/job_tasks/<task_id>', methods=['GET'])
+@req_token
+def get_task(current_employee, task_id):
+    """
+    Get a task based on task.id
+    """
+    task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
+
+    if not task:
+        return jsonify({'message': 'No tasks found'})
+
+    __task__ = {}
+
+    __task__['id'] = task.id
+    __task__['task'] = task.task
+    __task__['done'] = task.done
+
+    return jsonify(__task__)
+
+
+@app.route('/job_tasks', methods=['POST'])
+@req_token
+def create_job_task(current_employee):
+    """
+    Create a task
+    """
+    __create__ = request.get_json()
+
+    new_task = Job_tasks(task=__create__['task'], done=False, employee_id=current_employee.id)
+
+    db.session.add(new_task)
+    db.session.commit()
+
+    return jsonify({'message': 'Job task created'})
+
+
+@app.route('/job_tasks/<task_id>', methods=['PUT'])
+@req_token
+def done(current_employee, task_id):
+    """
+    Complete a task
+    """
+    task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
+
+    if not task:
+        return jsonify({'message': 'No tasks found'})
+
+    task.done = True
+    db.session.commit()
+
+    return jsonify({'message': 'Task is done'})
+
+
+@app.route('/job_tasks/<task_id>', methods=['DELETE'])
+@req_token
+def remove_job_task(current_employee, task_id):
+    """
+    Remove a task,
+    if employee isn't an admin, returns an error (401)
+    """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
+    task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
+
+    if not task:
+        return jsonify({'message': 'No tasks found'})
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return jsonify({'message': 'Task has been removed'})
 
 
 if __name__ == '__main__':

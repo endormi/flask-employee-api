@@ -18,3 +18,11 @@ class DevConfig(object):
     DEBUG = True
     SECRET_KEY = ''
 ```
+
+Run:
+
+```
+python api.py
+```
+
+Test the `API` with [Postman](https://www.getpostman.com/) or something similar.
