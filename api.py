@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+from functools import wraps
 import datetime
 import jwt
 import uuid
@@ -15,9 +16,9 @@ db = SQLAlchemy(app)
 
 
 class Employee(db.Model):
+    admin = db.Column(db.Boolean)
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.String(50), unique=True)
-    admin = db.Column(db.Boolean)
     name = db.Column(db.String(24))
     job_title = db.Column(db.String(24))
     password = db.Column(db.String(50))
@@ -55,11 +56,37 @@ def login():
     return make_response('Not authenticated!', 401)
 
 
+def req_token(i):
+    @wraps(i)
+    def decoy(*args, **kwargs):
+        employee_token = None
+
+        if 'x-access-token' in request.headers:
+            employee_token = request.headers['x-access-token']
+
+        if not employee_token:
+            return jsonify({'message': 'Missing token'}), 401
+
+        try:
+            jwtoken = jwt.decode(employee_token, app.config['SECRET_KEY'])
+            current_employee = Employee.query.filter_by(public_id=jwtoken['public_id']).first()
+        except:
+            return make_response('Not authenticated! Invalid Token!', 401)
+
+        return i(current_employee, *args, **kwargs)
+
+    return decoy
+
+
 @app.route('/employee', methods=['GET'])
-def get_employees():
+@req_token
+def get_employees(current_employee):
     """
     Get all employees
     """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
     employees = Employee.query.all()
 
     output = []
@@ -80,11 +107,15 @@ def get_employees():
 
 
 @app.route('/employee/<public_id>', methods=['GET'])
-def get_employee(public_id):
+@req_token
+def get_employee(current_employee, public_id):
     """
     Get an employee based on public_id,
     if public_id doesn't match with an employee, returns an error message
     """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
     employee = Employee.query.filter_by(public_id=public_id).first()
 
     if not employee:
@@ -102,11 +133,15 @@ def get_employee(public_id):
 
 
 @app.route('/employee/<public_id>', methods=['PUT'])
-def promote_employee(public_id):
+@req_token
+def promote_employee(current_employee, public_id):
     """
     Promote new employee,
     if public_id doesn't match with an employee, returns an error message
     """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
     employee = Employee.query.filter_by(public_id=public_id).first()
 
     if not employee:
@@ -119,10 +154,14 @@ def promote_employee(public_id):
 
 
 @app.route('/employee', methods=['POST'])
-def create_employee():
+@req_token
+def create_employee(current_employee):
     """
     Create a new employee
     """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
     employee_data = request.get_json()
 
     pw_hash = generate_password_hash(employee_data['password'], method='sha256')
@@ -136,11 +175,15 @@ def create_employee():
 
 
 @app.route('/employee/<public_id>', methods=['DELETE'])
-def remove_employee(public_id):
+@req_token
+def remove_employee(current_employee, public_id):
     """
     Remove employee,
     if public_id doesn't match with an employee, returns an error message
     """
+    if not current_employee.admin:
+        return jsonify({'message': 'No no, you cannot do that'})
+
     employee = Employee.query.filter_by(public_id=public_id).first()
 
     if not employee:
