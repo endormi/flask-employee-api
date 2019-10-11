@@ -14,7 +14,7 @@ Example:
 import os
 
 class DevConfig(object):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///C:\\users\\endormi\\employee.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///C:\\users\\user\\employee.db"
     DEBUG = True
     SECRET_KEY = ''
 ```
