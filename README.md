@@ -16,7 +16,7 @@ import os
 class DevConfig(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:///C:\\users\\user\\employee.db"
     DEBUG = True
-    SECRET_KEY = ''
+    SECRET_KEY = 'Your_Secret_Key'
 ```
 
 Test the `API` with [Postman](https://www.getpostman.com/) or something similar.
@@ -65,8 +65,11 @@ Go to body, click on raw and choose `JSON`.
 
 ```sh
 http://127.0.0.1:5000/employee POST method
+```
 
-Example
+Example employee:
+
+```js
 {"name": "john doe", "job_title": "doeing", "password": "123"}
 ```
 
@@ -88,6 +91,8 @@ http://127.0.0.1:5000/employee/(public_id) DELETE method
 
 ### Task lists
 
+> These are employee specific and not visible to admin users.
+
 Checking tasks "employee specific":
 
 ```sh
@@ -100,8 +105,11 @@ Go to body, click on raw and choose `JSON`.
 
 ```sh
 http://127.0.0.1:5000/job_tasks POST method
+```
 
-Example:
+Example task:
+
+```js
 {"task": "do things"}
 ```
 

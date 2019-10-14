@@ -35,7 +35,7 @@ class Job_tasks(db.Model):
 def login():
     """
     Login authorization,
-    Has three intances where if not authorized, 401 error occurs (not authenticated)
+    Has two intances where if not authorized, 401 error occurs (not authenticated)
     If authorized it creates a token with an expiration date of 1 hour
     """
     __auth__ = request.authorization
@@ -58,7 +58,7 @@ def login():
 
 def req_token(i):
     @wraps(i)
-    def decoy(*args, **kwargs):
+    def __token__(*args, **kwargs):
         employee_token = None
 
         if 'x-access-token' in request.headers:
@@ -75,7 +75,7 @@ def req_token(i):
 
         return i(current_employee, *args, **kwargs)
 
-    return decoy
+    return __token__
 
 
 @app.route('/employee', methods=['GET'])
@@ -229,7 +229,7 @@ def get_task(current_employee, task_id):
     task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
 
     if not task:
-        return jsonify({'message': 'No tasks found'})
+        return make_response('No tasks found!', 404)
 
     __task__ = {}
 
@@ -265,7 +265,7 @@ def done(current_employee, task_id):
     task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
 
     if not task:
-        return jsonify({'message': 'No tasks found'})
+        return make_response('No tasks found!', 404)
 
     task.done = True
     db.session.commit()
@@ -277,16 +277,12 @@ def done(current_employee, task_id):
 @req_token
 def remove_job_task(current_employee, task_id):
     """
-    Remove a task,
-    if employee isn't an admin, returns an error (401)
+    Remove a task
     """
-    if not current_employee.admin:
-        return jsonify({'message': 'No no, you cannot do that'})
-
     task = Job_tasks.query.filter_by(id=task_id, employee_id=current_employee.id).first()
 
     if not task:
-        return jsonify({'message': 'No tasks found'})
+        return make_response('No tasks found!', 404)
 
     db.session.delete(task)
     db.session.commit()
