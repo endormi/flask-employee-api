@@ -93,13 +93,13 @@ http://127.0.0.1:5000/employee/(public_id) DELETE method
 
 > These are employee specific and not visible to admin users.
 
-Checking tasks "employee specific":
+Checking tasks:
 
 ```sh
 http://127.0.0.1:5000/job_tasks GET method
 ```
 
-Creating a task "employee specific":
+Creating a task:
 
 Go to body, click on raw and choose `JSON`.
 
@@ -119,13 +119,13 @@ With the given `ID` check only one task:
 http://127.0.0.1:5000/job_tasks/1 GET method
 ```
 
-Finishing a task "employee specific":
+Finishing a task:
 
 ```sh
 http://127.0.0.1:5000/job_tasks/1 PUT method
 ```
 
-Removing a task "employee specific":
+Removing a task:
 
 ```sh
 http://127.0.0.1:5000/job_tasks/1 DELETE method
