@@ -33,9 +33,9 @@ Login with test account that has admin rights:
 
 ```sh
 http://127.0.0.1:5000/login GET method
-
-In postman (or a similar service) go to authorization, choose basic authorization and for username type test and for password test
 ```
+
+> In postman (or a similar service) go to authorization, choose basic authorization and for username type test and for password test.
 
 This should give you a token which expires within an hour.
 
