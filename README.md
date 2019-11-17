@@ -2,6 +2,16 @@
 
 Simple API for Employees to keep track of job tasks with user authorization.
 
+## Getting started
+
+Clone:
+
+```sh
+HTTPS: https://github.com/endormi/flask-employee-api.git SSH: git@github.com:endormi/flask-employee-api.git
+```
+
+Install requirements:
+
 ```sh
 pip install -r requirements.txt
 ```
