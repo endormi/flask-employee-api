@@ -100,7 +100,6 @@ def get_employees(current_employee):
         empl_data['public_id'] = employee.public_id
         empl_data['name'] = employee.name
         empl_data['job_title'] = employee.job_title
-        empl_data['password'] = employee.password
 
         output.append(empl_data)
 
