@@ -37,6 +37,12 @@ Run:
 python api.py
 ```
 
+Running test:
+
+```
+python test_api.py
+```
+
 ## Admin credentials
 
 Test account:
