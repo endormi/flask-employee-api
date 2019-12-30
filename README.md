@@ -37,6 +37,34 @@ Run:
 python api.py
 ```
 
+## Admin credentials
+
+Test account:
+
+```sh
+login: test
+
+password: test
+```
+
+> Use this code if you have a totally new db and need to create an user or just want to make a new admin
+
+```python
+@app.route('/employee', methods=['POST'])
+def create_employee():
+
+    employee_data = request.get_json()
+
+    pw_hash = generate_password_hash(employee_data['password'], method='sha256')
+
+    new_employee = Employee(public_id=str(uuid.uuid1()), name=employee_data['name'], job_title=employee_data['job_title'], password=pw_hash, admin=True)
+
+    db.session.add(new_employee)
+    db.session.commit()
+
+    return jsonify({'message': 'New employee added'})
+```
+
 ### Employees
 
 Login with test account that has admin rights:
@@ -63,8 +91,10 @@ Here you should see a list of employees with `public id's`, that `public id` is 
 
 Example:
 
+> Visible for anyone.
+
 ```sh
-http://127.0.0.1:5000/employee/3e36267f-5a9c-4a02-9397-1f2fbee52ce1
+http://127.0.0.1:5000/employee/1ab439cc-ec09-11e9-8090-4cedfb3cafc4
 ```
 
 Creating an employee:
@@ -88,7 +118,7 @@ Promoting an employee:
 > Doesn't work if you're not an admin.
 
 ```sh
-http://127.0.0.1:5000/employee/(public_id) PUT method
+http://127.0.0.1:5000/employee/<public_id> PUT method
 ```
 
 Removing an employee:
@@ -96,7 +126,7 @@ Removing an employee:
 > Doesn't work if you're not an admin.
 
 ```sh
-http://127.0.0.1:5000/employee/(public_id) DELETE method
+http://127.0.0.1:5000/employee/<public_id> DELETE method
 ```
 
 ### Task lists
@@ -126,17 +156,17 @@ Example task:
 With the given `ID` check only one task:
 
 ```sh
-http://127.0.0.1:5000/job_tasks/1 GET method
+http://127.0.0.1:5000/job_tasks/<id> GET method
 ```
 
 Finishing a task:
 
 ```sh
-http://127.0.0.1:5000/job_tasks/1 PUT method
+http://127.0.0.1:5000/job_tasks/<id> PUT method
 ```
 
 Removing a task:
 
 ```sh
-http://127.0.0.1:5000/job_tasks/1 DELETE method
+http://127.0.0.1:5000/job_tasks/<id> DELETE method
 ```

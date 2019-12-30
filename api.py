@@ -108,14 +108,11 @@ def get_employees(current_employee):
 
 
 @app.route('/employee/<public_id>', methods=['GET'])
-@req_token
-def get_employee(current_employee, public_id):
+def get_employee(public_id):
     """
     Get an employee based on public_id,
     if employee isn't an admin, returns an error (401)
     """
-    if not current_employee.admin:
-        return jsonify({'message': 'No no, you cannot do that'})
 
     employee = Employee.query.filter_by(public_id=public_id).first()
 
@@ -125,10 +122,8 @@ def get_employee(current_employee, public_id):
     empl_data = {}
 
     empl_data['admin'] = employee.admin
-    empl_data['public_id'] = employee.public_id
     empl_data['name'] = employee.name
     empl_data['job_title'] = employee.job_title
-    empl_data['password'] = employee.password
 
     return jsonify({'Employee': empl_data})
 
