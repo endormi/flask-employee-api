@@ -1,6 +1,6 @@
 # Flask-Employee-API [![Python Version](https://img.shields.io/badge/python-3.6.1-brightgreen.svg?)](https://www.python.org/downloads/)
 
-Simple API for Employees to keep track of job tasks with user authorization.
+Simple API for Employees to keep track of job tasks with user authorization (with password hashing using sha512).
 
 ## Getting started
 
