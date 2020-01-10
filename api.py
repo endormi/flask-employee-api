@@ -160,7 +160,7 @@ def create_employee(current_employee):
 
     employee_data = request.get_json()
 
-    pw_hash = generate_password_hash(employee_data['password'], method='sha256')
+    pw_hash = generate_password_hash(employee_data['password'], method='pbkdf2:sha512')
 
     new_employee = Employee(public_id=str(uuid.uuid1()), name=employee_data['name'], job_title=employee_data['job_title'], password=pw_hash, admin=False)
 
