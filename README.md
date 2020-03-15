@@ -61,7 +61,7 @@ def create_employee():
 
     employee_data = request.get_json()
 
-    pw_hash = generate_password_hash(employee_data['password'], method='sha256')
+    pw_hash = generate_password_hash(employee_data['password'], method='pbkdf2:sha512')
 
     new_employee = Employee(public_id=str(uuid.uuid1()), name=employee_data['name'], job_title=employee_data['job_title'], password=pw_hash, admin=True)
 
@@ -70,6 +70,8 @@ def create_employee():
 
     return jsonify({'message': 'New employee added'})
 ```
+
+Doesn't work if you're not an admin = x
 
 ### Employees
 
@@ -87,7 +89,7 @@ Now go to headers and add key with the name `x-access-token` and add your token 
 
 Check all of the employees:
 
-> Doesn't work if you're not an admin.
+> x
 
 ```
 http://127.0.0.1:5000/employee
@@ -107,7 +109,7 @@ Creating an employee:
 
 Go to body, click on raw and choose `JSON`.
 
-> Doesn't work if you're not an admin.
+> x
 
 ```sh
 http://127.0.0.1:5000/employee POST method
@@ -121,7 +123,7 @@ Example employee:
 
 Promoting an employee:
 
-> Doesn't work if you're not an admin.
+> x
 
 ```sh
 http://127.0.0.1:5000/employee/<public_id> PUT method
@@ -129,7 +131,7 @@ http://127.0.0.1:5000/employee/<public_id> PUT method
 
 Removing an employee:
 
-> Doesn't work if you're not an admin.
+> x
 
 ```sh
 http://127.0.0.1:5000/employee/<public_id> DELETE method
